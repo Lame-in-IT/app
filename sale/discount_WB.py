@@ -65,4 +65,4 @@ def main():
         schedule.run_pending()
 
 if __name__ == '__main__':
-    raed_xlsx()
+    main()
