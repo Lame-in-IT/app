@@ -1,5 +1,4 @@
-from datetime import datetime
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 
 def get_date():
     corrent_date = "{:%Y-%m-%d}".format(datetime.now())

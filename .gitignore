@@ -3,3 +3,4 @@ __pycache__
 venv
 config_BD.py
 tokin_bot.py
+headers_OZON.py

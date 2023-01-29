@@ -1,20 +1,21 @@
 from tokin_bot import TOKIN
 from aiogram import Bot, Dispatcher, executor, types
 import markups as nav
-import asyncio
-import aioschedule
 from get_reviews_WB import get_reviews_WB
 from get_deviations import created_file
 from get_Deliveries_OZON import created_file_OZON_1, created_file_OZON_2, created_file_OZON_3, created_file_OZON_4
 from get_Deliveries_WB import created_file_WB_1, created_file_WB_2, created_file_WB_3, created_file_WB_4
 from get_Deliveries_YM import created_file_YM_1, created_file_YM_2, created_file_YM_3, created_file_YM_4
 from min_max_price import created_file_price_min_max
+from discount_item import discount_WB_nmId
+from sale.craete_sale import craete_sale
 from aiofiles import os
 from db import Database
 
 bot = Bot(token=TOKIN, parse_mode="HTML")
 dp = Dispatcher(bot)
 db = Database('db_WB_OZON.db')
+
 
 @dp.message_handler(commands=["start"])
 async def command_start(message: types.Message):
@@ -23,14 +24,27 @@ async def command_start(message: types.Message):
             db.add_user(message.from_user.id)
         await bot.send_message(message.from_user.id, 'Приветствую вас: {0.first_name}'.format(message.from_user), reply_markup=nav.mainMenu)
 
+
 @dp.message_handler()
-async def bot_message(message: types.Message): 
+async def bot_message(message: types.Message):
     if message.text == '🪆 Главное меню':
         await bot.send_message(message.from_user.id, '🪆 Главное меню', reply_markup=nav.mainMenu)
 
+    elif message.text == 'Меню':
+        await bot.send_message(message.from_user.id, 'Меню', reply_markup=nav.mainMenu)
+
     elif message.text == '🅿️ Данные Маркетплейсов':
         await bot.send_message(message.from_user.id, '🅿️ Данные Маркетплейсов', reply_markup=nav.mainPrice)
-    
+
+    elif message.text == 'Скидка для WB':
+        await bot.send_message(message.from_user.id, 'Скидка для WB', reply_markup=nav.saleMenu)
+
+    elif message.text == 'Скидка на товар':
+        await bot.send_message(message.from_user.id, 'Чтобы поставить % скидки на конкретный товар нужно прописать Артикул WB + пробел + число скидки + пробел + знак процента: пример "12345678 46 %"', reply_markup=nav.saleMenu)
+
+    elif message.text == 'Свой % скидки':
+        await bot.send_message(message.from_user.id, 'Чтобы поставить свой % скидки нужно прописать число + знак процента: пример "25%"', reply_markup=nav.saleMenu)
+
     elif message.text == 'Изменения в ценах':
         await bot.send_message(message.from_user.id, 'Ждите. Идет сбор данных по ценам с площадок...')
         try:
@@ -38,17 +52,17 @@ async def bot_message(message: types.Message):
             await bot_pric(chat_id=chat_id)
         except Exception as e:
             await message.answer("Возникла ошибка. Попробуйте еще раз сделать запрос.")
-            await message.answer(e)    
+            await message.answer(e)
 
     elif message.text == '📯 Отзывы на WB':
         await bot.send_message(message.from_user.id, 'Введите артикул вместе с Артикул: ')
-    
+
     elif message.text == '🅿️ Поставки':
         await bot.send_message(message.from_user.id, '🅿️ Поставки', reply_markup=nav.mainDeliveries)
 
     elif message.text == 'Поставки на OZON':
         await bot.send_message(message.from_user.id, 'Поставки на OZON', reply_markup=nav.mainDelivOZON)
-    
+
     elif message.text == 'OZON поставки на 2 недели':
         await bot.send_message(message.from_user.id, 'Ждите. Идет сбор данных по поставкам для OZON...')
         try:
@@ -57,7 +71,7 @@ async def bot_message(message: types.Message):
         except Exception as e:
             await message.answer("Возникла ошибка. Попробуйте еще раз сделать запрос.")
             await message.answer(e)
-        
+
     elif message.text == 'OZON поставки на 4 недели':
         await bot.send_message(message.from_user.id, 'Ждите. Идет сбор данных по поставкам для OZON...')
         try:
@@ -93,7 +107,7 @@ async def bot_message(message: types.Message):
         except Exception as e:
             await message.answer("Возникла ошибка. Попробуйте еще раз сделать запрос.")
             await message.answer(e)
-        
+
     elif message.text == 'WB поставки на 4 недели':
         await bot.send_message(message.from_user.id, 'Ждите. Идет сбор данных по поставкам для OZON...')
         try:
@@ -129,7 +143,7 @@ async def bot_message(message: types.Message):
         except Exception as e:
             await message.answer("Возникла ошибка. Попробуйте еще раз сделать запрос.")
             await message.answer(e)
-        
+
     elif message.text == 'Яндекс поставки на 4 недели':
         await bot.send_message(message.from_user.id, 'Ждите. Идет сбор данных по поставкам для OZON...')
         try:
@@ -162,22 +176,83 @@ async def bot_message(message: types.Message):
 
     elif message.text == 'Поставки на Яндекс':
         await bot.send_message(message.from_user.id, 'Поставки на Яндекс', reply_markup=nav.mainDelivYM)
-    
+
     elif message.text == '🔙 Назад к разделам':
         await bot.send_message(message.from_user.id, '🔙 Назад к разделам', reply_markup=nav.mainPrice)
-    
+
     elif message.text == '🔙 Маркетплейсы':
         await bot.send_message(message.from_user.id, '🔙 Маркетплейсы', reply_markup=nav.mainDeliveries)
-    
+
     elif (message.text).split(": ")[0] == 'Артикул':
         try:
             await message.answer("Ждите. Идет сбор данных ...")
             chat_id = message.chat.id
-            text = (message.text).split(": ")[1]  
+            text = (message.text).split(": ")[1]
             await bot_sta(article=text, chat_id=chat_id)
         except Exception as ex:
-            await message.answer("Возникла ошибка. Попробуйте ввести другой артикул.")
+            await message.answer(f"Возникла ошибка. Попробуйте ввести другой артикул. {ex}")
     
+    elif (message.text).split(" ")[2] == '%':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
+                try:
+                    nmId_sale = (message.text).split(" ")[0]
+                    proch_sale = (message.text).split(" ")[1]
+                    discount_WB_nmId(nmId_sale, proch_sale)
+                    await bot.send_message(message.from_user.id, f"Скидка на товар {nmId_sale} установлена скидка {proch_sale} процентов.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif message.text == '20 процентов':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
+                try:
+                    proch_sale = (message.text).split(" ")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, "Скидка в 20 процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif message.text == '30 процентов':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
+                try:
+                    proch_sale = (message.text).split(" ")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, "Скидка в 30 процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif message.text == '40 процентов':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
+                try:
+                    proch_sale = (message.text).split(" ")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, "Скидка в 40 процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif message.text == '50 процентов':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
+                try:
+                    proch_sale = (message.text).split(" ")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, "Скидка в 50 процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif (message.text)[2] == '%':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
+                try:
+                    proch_sale = (message.text).split("%")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, f"Скидка в {proch_sale} процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
     elif message.text == 'price':
         if message.chat.type == 'private':
             if message.from_user.id == 1323522063:
@@ -193,11 +268,12 @@ async def bot_message(message: types.Message):
                         db.set_active(item[1], 0)
                         await message.answer("Возникла ошибка. Попробуйте еще раз сделать запрос.")
                     await bot.send_message(message.from_user.id, "Успешная рассылка")
-    
+
     else:
         await message.answer("Возникла ошибка. Введена неизвестная команда.")
 
-async def bot_sta(article, chat_id = ''):
+
+async def bot_sta(article, chat_id=''):
     artic = int(article)
     files_WB = get_reviews_WB(artic)
     file_1 = files_WB[0]
@@ -207,72 +283,86 @@ async def bot_sta(article, chat_id = ''):
     await os.remove(file_1)
     await os.remove(file_2)
 
-async def bot_pric(chat_id = ''):
+
+async def bot_pric(chat_id=''):
     files_mark = created_file()
     await bot.send_document(chat_id=chat_id, document=open(files_mark, 'rb'))
     await os.remove(files_mark)
 
-async def bot_OZON_1(chat_id = ''):
+
+async def bot_OZON_1(chat_id=''):
     files_OZON_1 = created_file_OZON_1()
     await bot.send_document(chat_id=chat_id, document=open(files_OZON_1, 'rb'))
     await os.remove(files_OZON_1)
 
-async def bot_OZON_2(chat_id = ''):
+
+async def bot_OZON_2(chat_id=''):
     files_OZON_2 = created_file_OZON_2()
     await bot.send_document(chat_id=chat_id, document=open(files_OZON_2, 'rb'))
     await os.remove(files_OZON_2)
 
-async def bot_OZON_3(chat_id = ''):
+
+async def bot_OZON_3(chat_id=''):
     files_OZON_3 = created_file_OZON_3()
     await bot.send_document(chat_id=chat_id, document=open(files_OZON_3, 'rb'))
     await os.remove(files_OZON_3)
 
-async def bot_OZON_4(chat_id = ''):
+
+async def bot_OZON_4(chat_id=''):
     files_OZON_4 = created_file_OZON_4()
     await bot.send_document(chat_id=chat_id, document=open(files_OZON_4, 'rb'))
     await os.remove(files_OZON_4)
 
-async def bot_WB_1(chat_id = ''):
+
+async def bot_WB_1(chat_id=''):
     files_WB_1 = created_file_WB_1()
     await bot.send_document(chat_id=chat_id, document=open(files_WB_1, 'rb'))
     await os.remove(files_WB_1)
 
-async def bot_WB_2(chat_id = ''):
+
+async def bot_WB_2(chat_id=''):
     files_WB_2 = created_file_WB_2()
     await bot.send_document(chat_id=chat_id, document=open(files_WB_2, 'rb'))
     await os.remove(files_WB_2)
 
-async def bot_WB_3(chat_id = ''):
+
+async def bot_WB_3(chat_id=''):
     files_WB_3 = created_file_WB_3()
     await bot.send_document(chat_id=chat_id, document=open(files_WB_3, 'rb'))
     await os.remove(files_WB_3)
 
-async def bot_WB_4(chat_id = ''):
+
+async def bot_WB_4(chat_id=''):
     files_WB_4 = created_file_WB_4()
     await bot.send_document(chat_id=chat_id, document=open(files_WB_4, 'rb'))
     await os.remove(files_WB_4)
 
-async def bot_YM_1(chat_id = ''):
+
+async def bot_YM_1(chat_id=''):
     files_YM_1 = created_file_YM_1()
     await bot.send_document(chat_id=chat_id, document=open(files_YM_1, 'rb'))
     await os.remove(files_YM_1)
 
-async def bot_YM_2(chat_id = ''):
+
+async def bot_YM_2(chat_id=''):
     files_YM_2 = created_file_YM_2()
     await bot.send_document(chat_id=chat_id, document=open(files_YM_2, 'rb'))
     await os.remove(files_YM_2)
 
-async def bot_YM_3(chat_id = ''):
+
+async def bot_YM_3(chat_id=''):
     files_YM_3 = created_file_YM_3()
     await bot.send_document(chat_id=chat_id, document=open(files_YM_3, 'rb'))
     await os.remove(files_YM_3)
 
-async def bot_YM_4(chat_id = ''):
+
+async def bot_YM_4(chat_id=''):
     files_YM_4 = created_file_YM_4()
     await bot.send_document(chat_id=chat_id, document=open(files_YM_4, 'rb'))
     await os.remove(files_YM_4)
 
-async def bot_min_price(chat_id = ''):
+
+async def bot_min_price(chat_id=''):
     files_min_price = created_file_price_min_max()
     await bot.send_document(chat_id=chat_id, document=open(files_min_price, 'rb'))
     await os.remove(files_min_price)
