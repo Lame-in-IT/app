@@ -36,9 +36,7 @@ def discount_WB_minus():
         for index_1, item_1 in enumerate(list_article):
             if list_discount[index_1] + int(proch_sale) >= 3 and list_discount[index_1] + int(proch_sale) <= 95:
                 body_1.append({"discount": list_discount[index_1] + 20, "nm": item_1,})
-        rinquiry_1 = requests.post(
-                url=f'https://suppliers-api.wildberries.ru/public/api/v1/updateDiscounts', json=body_1, headers=headers_OZON).text
-        print(rinquiry_1)
+        requests.post(url=f'https://suppliers-api.wildberries.ru/public/api/v1/updateDiscounts', json=body_1, headers=headers_OZON).text
     except Exception as e:
         print(e)
         
@@ -52,9 +50,7 @@ def discount_WB():
         for index_1, item_1 in enumerate(list_article):
             if list_discount[index_1] - int(proch_sale) >= 3 and list_discount[index_1] - int(proch_sale) <= 95:
                 body_1.append({"discount": list_discount[index_1] - 20, "nm": item_1,})
-        rinquiry_1 = requests.post(
-                url=f'https://suppliers-api.wildberries.ru/public/api/v1/updateDiscounts', json=body_1, headers=headers_OZON).text
-        print(rinquiry_1)
+        requests.post(url=f'https://suppliers-api.wildberries.ru/public/api/v1/updateDiscounts', json=body_1, headers=headers_OZON).text
     except Exception as e:
         print(e)
 

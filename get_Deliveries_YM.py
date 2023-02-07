@@ -34,18 +34,17 @@ def get_Deliveries_YM():
             list_full_stoc_YM = []
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"""SELECT * from warehouses WHERE ДАТА = '{corrent_date}' AND Маркетплейс = 'Яндекс Маркет';"""
+                    f"""SELECT * from warehouses WHERE ДАТА = '{corrent_date}' AND Маркетплейс = 'Яндекс Маркет FBY             ';"""
                 )
                 list_remains = cursor.fetchall()
                 for iten_remains in list_remains:
                     for item_remains in range(0, len(iten_remains), 19):
                         list_full_stoc_YM.append(list(itertools.islice(iten_remains, item_remains, item_remains + 19)))
-            print(list_full_stoc_YM)
         elif list_curs[0][0] == False:
             list_full_stoc_YM = []
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"""SELECT * from warehouses WHERE ДАТА = '{last_day}' AND Маркетплейс = 'Яндекс Маркет';"""
+                    f"""SELECT * from warehouses WHERE ДАТА = '{last_day}' AND Маркетплейс = 'Яндекс Маркет FBY             ';"""
                 )
                 list_remains = cursor.fetchall()
                 for iten_remains in list_remains:
@@ -53,10 +52,8 @@ def get_Deliveries_YM():
                         list_full_stoc_YM.append(list(itertools.islice(iten_remains, item_remains, item_remains + 19)))
         return list_full_stoc_YM
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (get_Deliveries_YM)")
             constat()
             get_Deliveries_YM()
     finally:
@@ -75,7 +72,7 @@ def created_file_YM_1():
         sheet["C1"] = "Наименование товара"
         sheet["D1"] = "Текущий остаток на складе маркетплейса"
         sheet["E1"] = "Рассчетные продажи за период"
-        sheet["F1"] = "Количество в поставке" 
+        sheet["F1"] = "Рекомендованная поставка" 
         sheet["G1"] = "Период на который делается подсорт"
         list_Макетплейс = []
         list_Склад = []
@@ -85,15 +82,14 @@ def created_file_YM_1():
         list_Количество_в_поставке = []
         list_Период = []
         for item in data_stock:
-            if item[7] <= 0:
-                if item[15] > 0:
-                    list_Макетплейс.append(item[0])
-                    list_Склад.append(item[1])
-                    list_Наименование.append(item[3])
-                    list_Текущий_остаток.append(item[4])
-                    list_Рассчетные_продажи.append(item[15])
-                    list_Количество_в_поставке.append(item[15] * 2)
-                    list_Период.append("2 недели")
+            if item[7] < 0:
+                list_Макетплейс.append(item[0])
+                list_Склад.append(item[1])
+                list_Наименование.append(item[3])
+                list_Текущий_остаток.append(item[4])
+                list_Рассчетные_продажи.append(item[6])
+                list_Количество_в_поставке.append(int((item[7] * -1) * 1.5))
+                list_Период.append("2 недели")
         for index_1_YM, item_1_YM in enumerate(list_Макетплейс):
             index_sheet = index_1_YM + 2
             sheet[f"A{index_sheet}"] = item_1_YM
@@ -103,14 +99,12 @@ def created_file_YM_1():
             sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_YM]
             sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_YM]
             sheet[f"G{index_sheet}"] = list_Период[index_1_YM]
-        book.save(f"Бланк поставки Яндекс на 1 неделю от {corrent_date}.xlsx")
+        book.save(f"Бланк поставки Яндекс на 2 недели от {corrent_date}.xlsx")
         book.close()
-        return f"Бланк поставки Яндекс на 1 неделю от {corrent_date}.xlsx"
+        return f"Бланк поставки Яндекс на 2 недели от {corrent_date}.xlsx"
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (created_file_YM_1)")
             constat()
             created_file_YM_1()
 
@@ -136,15 +130,14 @@ def created_file_YM_2():
         list_Количество_в_поставке = []
         list_Период = []
         for item in data_stock:
-            if item[7] <= 0:
-                if item[15] > 0:
-                    list_Макетплейс.append(item[0])
-                    list_Склад.append(item[1])
-                    list_Наименование.append(item[3])
-                    list_Текущий_остаток.append(item[4])
-                    list_Рассчетные_продажи.append(item[6])
-                    list_Количество_в_поставке.append(item[6] * 2)
-                    list_Период.append("4 недели")
+            if item[9] < 0:
+                list_Макетплейс.append(item[0])
+                list_Склад.append(item[1])
+                list_Наименование.append(item[3])
+                list_Текущий_остаток.append(item[4])
+                list_Рассчетные_продажи.append(item[8])
+                list_Количество_в_поставке.append(int((item[9] * -1) * 1.5))
+                list_Период.append("4 недели")
         for index_1_YM, item_1_YM in enumerate(list_Макетплейс):
             index_sheet = index_1_YM + 2
             sheet[f"A{index_sheet}"] = item_1_YM
@@ -154,14 +147,12 @@ def created_file_YM_2():
             sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_YM]
             sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_YM]
             sheet[f"G{index_sheet}"] = list_Период[index_1_YM]
-        book.save(f"Бланк поставки Яндекс на 2 недели от {corrent_date}.xlsx")
+        book.save(f"Бланк поставки Яндекс на 4 недели от {corrent_date}.xlsx")
         book.close()
-        return f"Бланк поставки Яндекс на 2 недели от {corrent_date}.xlsx"
+        return f"Бланк поставки Яндекс на 4 недели от {corrent_date}.xlsx"
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (created_file_YM_2)")
             constat()
             created_file_YM_2()
 
@@ -187,15 +178,14 @@ def created_file_YM_3():
         list_Количество_в_поставке = []
         list_Период = []
         for item in data_stock:
-            if item[7] <= 0:
-                if item[15] > 0:
-                    list_Макетплейс.append(item[0])
-                    list_Склад.append(item[1])
-                    list_Наименование.append(item[3])
-                    list_Текущий_остаток.append(item[4])
-                    list_Рассчетные_продажи.append(item[17])
-                    list_Количество_в_поставке.append(item[17] * 2)
-                    list_Период.append("6 недель")
+            if item[11] < 0:
+                list_Макетплейс.append(item[0])
+                list_Склад.append(item[1])
+                list_Наименование.append(item[3])
+                list_Текущий_остаток.append(item[4])
+                list_Рассчетные_продажи.append(item[10] // 1.3)
+                list_Количество_в_поставке.append(int(((item[11] // 1.3) * -1) * 1.5))
+                list_Период.append("6 недель")
         for index_1_YM, item_1_YM in enumerate(list_Макетплейс):
             index_sheet = index_1_YM + 2
             sheet[f"A{index_sheet}"] = item_1_YM
@@ -205,14 +195,12 @@ def created_file_YM_3():
             sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_YM]
             sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_YM]
             sheet[f"G{index_sheet}"] = list_Период[index_1_YM]
-        book.save(f"Бланк поставки Яндекс на 3 недели от {corrent_date}.xlsx")
+        book.save(f"Бланк поставки Яндекс на 6 недель от {corrent_date}.xlsx")
         book.close()
-        return f"Бланк поставки Яндекс на 3 недели от {corrent_date}.xlsx"
+        return f"Бланк поставки Яндекс на 6 недель от {corrent_date}.xlsx"
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (created_file_YM_3)")
             constat()
             created_file_YM_3()
 
@@ -238,15 +226,14 @@ def created_file_YM_4():
         list_Количество_в_поставке = []
         list_Период = []
         for item in data_stock:
-            if item[7] <= 0:
-                if item[15] > 0:
-                    list_Макетплейс.append(item[0])
-                    list_Склад.append(item[1])
-                    list_Наименование.append(item[3])
-                    list_Текущий_остаток.append(item[4])
-                    list_Рассчетные_продажи.append(item[6] * 2)
-                    list_Количество_в_поставке.append(item[6] * 4)
-                    list_Период.append("2 месяца")
+            if item[11] < 0:
+                list_Макетплейс.append(item[0])
+                list_Склад.append(item[1])
+                list_Наименование.append(item[3])
+                list_Текущий_остаток.append(item[4])
+                list_Рассчетные_продажи.append(item[10])
+                list_Количество_в_поставке.append(int((item[11] * -1) * 1.5))
+                list_Период.append("2 месяца")
         for index_1_YM, item_1_YM in enumerate(list_Макетплейс):
             index_sheet = index_1_YM + 2
             sheet[f"A{index_sheet}"] = item_1_YM
@@ -256,18 +243,14 @@ def created_file_YM_4():
             sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_YM]
             sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_YM]
             sheet[f"G{index_sheet}"] = list_Период[index_1_YM]
-        book.save(f"Бланк поставки Яндекс на 1 месяц от {corrent_date}.xlsx")
+        book.save(f"Бланк поставки Яндекс на 2 месяца от {corrent_date}.xlsx")
         book.close()
-        return f"Бланк поставки Яндекс на 1 месяц от {corrent_date}.xlsx"
+        return f"Бланк поставки Яндекс на 2 месяца от {corrent_date}.xlsx"
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (created_file_YM_4)")
             constat()
             created_file_YM_4()
-
-# ['OZON', 'Екатеринбург', 'Бутылка', 'Бутылка для воды-красная', 9, '2088', 1', 8', 3, 6, 6, 3, 9, 0, '2022-09-25', 0, 9, 2, 8]
 
 if __name__ == '__main__':
     created_file_YM_1()

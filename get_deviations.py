@@ -159,10 +159,8 @@ def get_deviations_OZON():
                     count_1_OZON()
         return [list_market_OZON, list_day_OZON, list_name_OZON, list_link_OZON, list_old_pric_OZON, list_new_pric_OZON, list_pric_OZON]
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (get_deviations_OZON)")
             constat()
             get_deviations_OZON()
     finally:
@@ -302,10 +300,8 @@ def get_deviations_WB():
                     count_1_WB()
         return [list_market_WB, list_day_WB, list_name_WB, list_link_WB, list_old_pric_WB, list_new_pric_WB, list_pric_WB]
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (get_deviations_WB)")
             constat()
             get_deviations_WB()
     finally:
@@ -363,10 +359,8 @@ def created_file():
                         )
         return f'Изменения цен на {date_1[0]}.csv'
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (created_file)")
             constat()
             created_file()
 

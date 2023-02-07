@@ -73,10 +73,8 @@ def min_max_price():
         return [list_market, list_article, list_name, list_old_price,
                 list_new_price, list_date_price, list_link]
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (min_max_price)")
             constat()
             min_max_price()
     finally:
@@ -153,10 +151,8 @@ def created_file_price_min_max():
             book.close()
             return f"Отклонение цен от предельных на {corrent_date}.xlsx"
     except Exception as ex:
-        print(ex)
         if attempt <= 5:
             time.sleep(30)
-            print("Перезапуск (created_file_price_min_max)")
             constat()
             created_file_price_min_max()
 

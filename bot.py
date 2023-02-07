@@ -182,77 +182,7 @@ async def bot_message(message: types.Message):
 
     elif message.text == '🔙 Маркетплейсы':
         await bot.send_message(message.from_user.id, '🔙 Маркетплейсы', reply_markup=nav.mainDeliveries)
-
-    elif (message.text).split(": ")[0] == 'Артикул':
-        try:
-            await message.answer("Ждите. Идет сбор данных ...")
-            chat_id = message.chat.id
-            text = (message.text).split(": ")[1]
-            await bot_sta(article=text, chat_id=chat_id)
-        except Exception as ex:
-            await message.answer(f"Возникла ошибка. Попробуйте ввести другой артикул. {ex}")
-
-    elif message.text == '20 процентов':
-        if message.chat.type == 'private':
-            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
-                try:
-                    proch_sale = (message.text).split(" ")[0]
-                    craete_sale(proch_sale)
-                    await bot.send_message(message.from_user.id, "Скидка в 20 процентов установлена для WB.")
-                except Exception as ex:
-                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
-
-    elif message.text == '30 процентов':
-        if message.chat.type == 'private':
-            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
-                try:
-                    proch_sale = (message.text).split(" ")[0]
-                    craete_sale(proch_sale)
-                    await bot.send_message(message.from_user.id, "Скидка в 30 процентов установлена для WB.")
-                except Exception as ex:
-                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
-
-    elif message.text == '40 процентов':
-        if message.chat.type == 'private':
-            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
-                try:
-                    proch_sale = (message.text).split(" ")[0]
-                    craete_sale(proch_sale)
-                    await bot.send_message(message.from_user.id, "Скидка в 40 процентов установлена для WB.")
-                except Exception as ex:
-                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
-
-    elif message.text == '50 процентов':
-        if message.chat.type == 'private':
-            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
-                try:
-                    proch_sale = (message.text).split(" ")[0]
-                    craete_sale(proch_sale)
-                    await bot.send_message(message.from_user.id, "Скидка в 50 процентов установлена для WB.")
-                except Exception as ex:
-                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
-
-    elif (message.text)[2] == '%':
-        if message.chat.type == 'private':
-            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
-                try:
-                    proch_sale = (message.text).split("%")[0]
-                    craete_sale(proch_sale)
-                    await bot.send_message(message.from_user.id, f"Скидка в {proch_sale} процентов установлена для WB.")
-                except Exception as ex:
-                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
-
-    elif (message.text).split("-")[2] == '%':
-        if message.chat.type == 'private':
-            if message.from_user.id == 1323522063 or message.from_user.id == 1280034790 or message.from_user.id == 1464515838 or message.from_user.id == 1400079423 or message.from_user.id == 540596285:
-                try:
-                    nmId_sale = (message.text).split("-")[0]
-                    proch_sale = (message.text).split("-")[1]
-                    discount_WB_nmId(nmId_sale, proch_sale)
-                    await bot.send_message(message.from_user.id, f"Скидка на товар {nmId_sale} установлена скидка {proch_sale} процентов.")
-                except Exception as ex:
-                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.")
-
+        
     elif message.text == 'price':
         if message.chat.type == 'private':
             if message.from_user.id == 1323522063:
@@ -268,6 +198,76 @@ async def bot_message(message: types.Message):
                         db.set_active(item[1], 0)
                         await message.answer("Возникла ошибка. Попробуйте еще раз сделать запрос.")
                     await bot.send_message(message.from_user.id, "Успешная рассылка")
+
+    elif (message.text).split(": ")[0] == 'Артикул':
+        try:
+            await message.answer("Ждите. Идет сбор данных ...")
+            chat_id = message.chat.id
+            text = (message.text).split(": ")[1]
+            await bot_sta(article=text, chat_id=chat_id)
+        except Exception as ex:
+            await message.answer(f"Возникла ошибка. Попробуйте ввести другой артикул. {ex}")
+
+    elif message.text == '20 процентов':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 540596285 or message.from_user.id == 5851106454:
+                try:
+                    proch_sale = (message.text).split(" ")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, "Скидка в 20 процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif message.text == '30 процентов':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 540596285 or message.from_user.id == 5851106454:
+                try:
+                    proch_sale = (message.text).split(" ")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, "Скидка в 30 процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif message.text == '40 процентов':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 540596285 or message.from_user.id == 5851106454:
+                try:
+                    proch_sale = (message.text).split(" ")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, "Скидка в 40 процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif message.text == '50 процентов':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 540596285 or message.from_user.id == 5851106454:
+                try:
+                    proch_sale = (message.text).split(" ")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, "Скидка в 50 процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif (message.text)[2] == '%':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 540596285 or message.from_user.id == 5851106454:
+                try:
+                    proch_sale = (message.text).split("%")[0]
+                    craete_sale(proch_sale)
+                    await bot.send_message(message.from_user.id, f"Скидка в {proch_sale} процентов установлена для WB.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.{ex}")
+
+    elif (message.text).split("-")[2] == '%':
+        if message.chat.type == 'private':
+            if message.from_user.id == 1323522063 or message.from_user.id == 540596285 or message.from_user.id == 5851106454:
+                try:
+                    nmId_sale = (message.text).split("-")[0]
+                    proch_sale = (message.text).split("-")[1]
+                    discount_WB_nmId(nmId_sale, proch_sale)
+                    await bot.send_message(message.from_user.id, f"Скидка на товар {nmId_sale} установлена скидка {proch_sale} процентов.")
+                except Exception as ex:
+                    await message.answer(f"Возникла ошибка. Попробуйте еще раз сделать запрос.")
 
     else:
         await message.answer("Возникла ошибка. Введена неизвестная команда.")
