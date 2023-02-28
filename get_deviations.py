@@ -3,7 +3,7 @@ import psycopg2
 import itertools
 from config_BD import host, user, password, database, port
 from get_date import get_date
-import csv
+import openpyxl
 
 attempt = 0
 count = 0
@@ -313,51 +313,40 @@ def created_file():
         date_1 = get_date()
         data_OZON = get_deviations_OZON()
         data_WB = get_deviations_WB()
+        cont_xslx = 2
         if count > 0:
-            with open(f'Изменения цен на {date_1[0]}.csv', 'w', encoding='utf_8', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(
-                    (
-                        'Маркетплейс',
-                        'Дата цен',
-                        'Название товара',
-                        'Ссылка на товар',
-                        'Старая Цена',
-                        'Новая Цена',
-                        'Изменения в цене',
-                    )
-                )
+            book = openpyxl.Workbook()
+            sheet = book.active
+            sheet["A1"] = "Маркетплейс"
+            sheet["B1"] = "Дата цен"
+            sheet["C1"] = "Название товара"
+            sheet["D1"] = "Ссылка на товар"
+            sheet["E1"] = "Старая Цена"
+            sheet["F1"] = "Новая Цена"
+            sheet["G1"] = "Изменения в цене"
             if count_OZON > 0:
                 for index_data_OZON, item_data_OZON in enumerate(data_OZON[0]):
-                    with open(f'Изменения цен на {date_1[0]}.csv', 'a', encoding='utf_8', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow(
-                            (
-                                item_data_OZON,
-                                data_OZON[1][index_data_OZON],
-                                data_OZON[2][index_data_OZON],
-                                data_OZON[3][index_data_OZON],
-                                data_OZON[4][index_data_OZON],
-                                data_OZON[5][index_data_OZON],
-                                data_OZON[6][index_data_OZON],
-                            )
-                        )
+                    sheet[f"A{cont_xslx}"] = item_data_OZON
+                    sheet[f"B{cont_xslx}"] = data_OZON[1][index_data_OZON]
+                    sheet[f"C{cont_xslx}"] = data_OZON[2][index_data_OZON]
+                    sheet[f"D{cont_xslx}"] = data_OZON[3][index_data_OZON]
+                    sheet[f"E{cont_xslx}"] = data_OZON[4][index_data_OZON]
+                    sheet[f"F{cont_xslx}"] = data_OZON[5][index_data_OZON]
+                    sheet[f"G{cont_xslx}"] = data_OZON[6][index_data_OZON]
+                    cont_xslx += 1
             if count_WB > 0:
                 for index_data_WB, item_data_WB in enumerate(data_WB[0]):
-                    with open(f'Изменения цен на {date_1[0]}.csv', 'a', encoding='utf_8', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow(
-                            (
-                                item_data_WB,
-                                data_WB[1][index_data_WB],
-                                data_WB[2][index_data_WB],
-                                data_WB[3][index_data_WB],
-                                data_WB[4][index_data_WB],
-                                data_WB[5][index_data_WB],
-                                data_WB[6][index_data_WB],
-                            )
-                        )
-        return f'Изменения цен на {date_1[0]}.csv'
+                    sheet[f"A{cont_xslx}"] = item_data_WB
+                    sheet[f"B{cont_xslx}"] = data_WB[1][index_data_WB]
+                    sheet[f"C{cont_xslx}"] = data_WB[2][index_data_WB]
+                    sheet[f"D{cont_xslx}"] = data_WB[3][index_data_WB]
+                    sheet[f"E{cont_xslx}"] = data_WB[4][index_data_WB]
+                    sheet[f"F{cont_xslx}"] = data_WB[5][index_data_WB]
+                    sheet[f"G{cont_xslx}"] = data_WB[6][index_data_WB]
+                    cont_xslx += 1
+        book.save(f'Изменения цен на {date_1[0]}.xlsx')
+        book.close()
+        return f'Изменения цен на {date_1[0]}.xlsx'
     except Exception as ex:
         if attempt <= 5:
             time.sleep(30)

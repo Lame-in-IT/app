@@ -66,39 +66,50 @@ def created_file_WB_1():
         corrent_date = date_now[0]
         data_stock = get_Deliveries_WB()
         book = openpyxl.Workbook()
-        sheet = book.active
-        sheet["A1"] = "Макетплейс"
-        sheet["B1"] = "Склад маркетплейса"
-        sheet["C1"] = "Наименование товара"
-        sheet["D1"] = "Текущий остаток на складе маркетплейса"
-        sheet["E1"] = "Рассчетные продажи за период"
-        sheet["F1"] = "Количество в поставке" 
-        sheet["G1"] = "Период на который делается подсорт"
-        list_Макетплейс = []
-        list_Склад = []
-        list_Наименование = []
-        list_Текущий_остаток= []
-        list_Рассчетные_продажи = []
-        list_Количество_в_поставке = []
-        list_Период = []
-        for item in data_stock:
-            if item[7] < 0:
-                list_Макетплейс.append(item[0])
-                list_Склад.append(item[1])
-                list_Наименование.append(item[3])
-                list_Текущий_остаток.append(item[4])
-                list_Рассчетные_продажи.append(item[6])
-                list_Количество_в_поставке.append(int((item[7] * -1) * 1.5))
-                list_Период.append("2 недели")
-        for index_1_WB, item_1_WB in enumerate(list_Макетплейс):
-            index_sheet = index_1_WB + 2
-            sheet[f"A{index_sheet}"] = item_1_WB
-            sheet[f"B{index_sheet}"] = list_Склад[index_1_WB]
-            sheet[f"C{index_sheet}"] = list_Наименование[index_1_WB]
-            sheet[f"D{index_sheet}"] = list_Текущий_остаток[index_1_WB]
-            sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_WB]
-            sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_WB]
-            sheet[f"G{index_sheet}"] = list_Период[index_1_WB]
+        for sheet_name in book.sheetnames:
+            sheet = book.get_sheet_by_name(sheet_name)
+            book.remove_sheet(sheet)
+        list_stocks = []
+        for item_stocks in data_stock:
+            if item_stocks[1] not in list_stocks:
+                list_stocks.append(item_stocks[1])
+        for item_cyte in list_stocks:
+            sheet = book.create_sheet(str(item_cyte))
+            sheet["A1"] = "Макетплейс"
+            sheet["B1"] = "Склад маркетплейса"
+            sheet["C1"] = "Наименование товара"
+            sheet["D1"] = "Текущий остаток на складе маркетплейса"
+            sheet["E1"] = "Рассчетные продажи за период"
+            sheet["F1"] = "Количество в поставке" 
+            sheet["G1"] = "Период на который делается подсорт"
+            list_Макетплейс = []
+            list_Склад = []
+            list_Наименование = []
+            list_Текущий_остаток= []
+            list_Рассчетные_продажи = []
+            list_Количество_в_поставке = []
+            list_Период = []
+            for item in data_stock:
+                if item[1] == item_cyte:
+                    list_Макетплейс.append(item[0])
+                    list_Склад.append(item[1])
+                    list_Наименование.append(item[3])
+                    list_Текущий_остаток.append(item[4])
+                    list_Рассчетные_продажи.append(item[6])
+                    if item[7] <= 0:
+                        list_Количество_в_поставке.append(int((item[7] * -1) * 1.25))
+                    if item[7] > 0:
+                        list_Количество_в_поставке.append(0)
+                    list_Период.append("2 недели")
+            for index_1_WB, item_1_WB in enumerate(list_Макетплейс):
+                index_sheet = index_1_WB + 2
+                sheet[f"A{index_sheet}"] = item_1_WB
+                sheet[f"B{index_sheet}"] = list_Склад[index_1_WB]
+                sheet[f"C{index_sheet}"] = list_Наименование[index_1_WB]
+                sheet[f"D{index_sheet}"] = list_Текущий_остаток[index_1_WB]
+                sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_WB]
+                sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_WB]
+                sheet[f"G{index_sheet}"] = list_Период[index_1_WB]
         book.save(f"Бланк поставки WB на 2 недели от {corrent_date}.xlsx")
         book.close()
         return f"Бланк поставки WB на 2 недели от {corrent_date}.xlsx"
@@ -114,39 +125,50 @@ def created_file_WB_2():
         corrent_date = date_now[0]
         data_stock = get_Deliveries_WB()
         book = openpyxl.Workbook()
-        sheet = book.active
-        sheet["A1"] = "Макетплейс"
-        sheet["B1"] = "Склад маркетплейса"
-        sheet["C1"] = "Наименование товара"
-        sheet["D1"] = "Текущий остаток на складе маркетплейса"
-        sheet["E1"] = "Рассчетные продажи за период"
-        sheet["F1"] = "Количество в поставке" 
-        sheet["G1"] = "Период на который делается подсорт"
-        list_Макетплейс = []
-        list_Склад = []
-        list_Наименование = []
-        list_Текущий_остаток= []
-        list_Рассчетные_продажи = []
-        list_Количество_в_поставке = []
-        list_Период = []
-        for item in data_stock:
-            if item[9] < 0:
-                list_Макетплейс.append(item[0])
-                list_Склад.append(item[1])
-                list_Наименование.append(item[3])
-                list_Текущий_остаток.append(item[4])
-                list_Рассчетные_продажи.append(item[8])
-                list_Количество_в_поставке.append(int((item[9] * -1) * 1.5))
-                list_Период.append("4 недели")
-        for index_1_WB, item_1_WB in enumerate(list_Макетплейс):
-            index_sheet = index_1_WB + 2
-            sheet[f"A{index_sheet}"] = item_1_WB
-            sheet[f"B{index_sheet}"] = list_Склад[index_1_WB]
-            sheet[f"C{index_sheet}"] = list_Наименование[index_1_WB]
-            sheet[f"D{index_sheet}"] = list_Текущий_остаток[index_1_WB]
-            sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_WB]
-            sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_WB]
-            sheet[f"G{index_sheet}"] = list_Период[index_1_WB]
+        for sheet_name in book.sheetnames:
+            sheet = book.get_sheet_by_name(sheet_name)
+            book.remove_sheet(sheet)
+        list_stocks = []
+        for item_stocks in data_stock:
+            if item_stocks[1] not in list_stocks:
+                list_stocks.append(item_stocks[1])
+        for item_cyte in list_stocks:
+            sheet = book.create_sheet(str(item_cyte))
+            sheet["A1"] = "Макетплейс"
+            sheet["B1"] = "Склад маркетплейса"
+            sheet["C1"] = "Наименование товара"
+            sheet["D1"] = "Текущий остаток на складе маркетплейса"
+            sheet["E1"] = "Рассчетные продажи за период"
+            sheet["F1"] = "Количество в поставке" 
+            sheet["G1"] = "Период на который делается подсорт"
+            list_Макетплейс = []
+            list_Склад = []
+            list_Наименование = []
+            list_Текущий_остаток= []
+            list_Рассчетные_продажи = []
+            list_Количество_в_поставке = []
+            list_Период = []
+            for item in data_stock:
+                if item[1] == item_cyte:
+                    list_Макетплейс.append(item[0])
+                    list_Склад.append(item[1])
+                    list_Наименование.append(item[3])
+                    list_Текущий_остаток.append(item[4])
+                    list_Рассчетные_продажи.append(item[8])
+                    if item[9] <= 0:
+                        list_Количество_в_поставке.append(int((item[9] * -1) * 1.25))
+                    if item[9] > 0:
+                        list_Количество_в_поставке.append(0)
+                    list_Период.append("4 недели")
+            for index_1_WB, item_1_WB in enumerate(list_Макетплейс):
+                index_sheet = index_1_WB + 2
+                sheet[f"A{index_sheet}"] = item_1_WB
+                sheet[f"B{index_sheet}"] = list_Склад[index_1_WB]
+                sheet[f"C{index_sheet}"] = list_Наименование[index_1_WB]
+                sheet[f"D{index_sheet}"] = list_Текущий_остаток[index_1_WB]
+                sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_WB]
+                sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_WB]
+                sheet[f"G{index_sheet}"] = list_Период[index_1_WB]
         book.save(f"Бланк поставки WB на 4 недели от {corrent_date}.xlsx")
         book.close()
         return f"Бланк поставки WB на 4 недели от {corrent_date}.xlsx"
@@ -155,102 +177,6 @@ def created_file_WB_2():
             time.sleep(30)
             constat()
             created_file_WB_2()
-
-def created_file_WB_3():
-    try:
-        date_now = get_date()
-        corrent_date = date_now[0]
-        data_stock = get_Deliveries_WB()
-        book = openpyxl.Workbook()
-        sheet = book.active
-        sheet["A1"] = "Макетплейс"
-        sheet["B1"] = "Склад маркетплейса"
-        sheet["C1"] = "Наименование товара"
-        sheet["D1"] = "Текущий остаток на складе маркетплейса"
-        sheet["E1"] = "Рассчетные продажи за период"
-        sheet["F1"] = "Количество в поставке" 
-        sheet["G1"] = "Период на который делается подсорт"
-        list_Макетплейс = []
-        list_Склад = []
-        list_Наименование = []
-        list_Текущий_остаток= []
-        list_Рассчетные_продажи = []
-        list_Количество_в_поставке = []
-        list_Период = []
-        for item in data_stock:
-            if item[11] < 0:
-                list_Макетплейс.append(item[0])
-                list_Склад.append(item[1])
-                list_Наименование.append(item[3])
-                list_Текущий_остаток.append(item[4])
-                list_Рассчетные_продажи.append(item[10] // 1.3)
-                list_Количество_в_поставке.append(int(((item[11] // 1.3) * -1) * 1.5))
-                list_Период.append("6 недель")
-        for index_1_WB, item_1_WB in enumerate(list_Макетплейс):
-            index_sheet = index_1_WB + 2
-            sheet[f"A{index_sheet}"] = item_1_WB
-            sheet[f"B{index_sheet}"] = list_Склад[index_1_WB]
-            sheet[f"C{index_sheet}"] = list_Наименование[index_1_WB]
-            sheet[f"D{index_sheet}"] = list_Текущий_остаток[index_1_WB]
-            sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_WB]
-            sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_WB]
-            sheet[f"G{index_sheet}"] = list_Период[index_1_WB]
-        book.save(f"Бланк поставки WB на 6 недель от {corrent_date}.xlsx")
-        book.close()
-        return f"Бланк поставки WB на 6 недель от {corrent_date}.xlsx"
-    except Exception as ex:
-        if attempt <= 5:
-            time.sleep(30)
-            constat()
-            created_file_WB_3()
-
-def created_file_WB_4():
-    try:
-        date_now = get_date()
-        corrent_date = date_now[0]
-        data_stock = get_Deliveries_WB()
-        book = openpyxl.Workbook()
-        sheet = book.active
-        sheet["A1"] = "Макетплейс"
-        sheet["B1"] = "Склад маркетплейса"
-        sheet["C1"] = "Наименование товара"
-        sheet["D1"] = "Текущий остаток на складе маркетплейса"
-        sheet["E1"] = "Рассчетные продажи за период"
-        sheet["F1"] = "Количество в поставке" 
-        sheet["G1"] = "Период на который делается подсорт"
-        list_Макетплейс = []
-        list_Склад = []
-        list_Наименование = []
-        list_Текущий_остаток= []
-        list_Рассчетные_продажи = []
-        list_Количество_в_поставке = []
-        list_Период = []
-        for item in data_stock:
-            if item[11] < 0:
-                list_Макетплейс.append(item[0])
-                list_Склад.append(item[1])
-                list_Наименование.append(item[3])
-                list_Текущий_остаток.append(item[4])
-                list_Рассчетные_продажи.append(item[10])
-                list_Количество_в_поставке.append(int((item[11] * -1) * 1.5))
-                list_Период.append("2 месяца")
-        for index_1_WB, item_1_WB in enumerate(list_Макетплейс):
-            index_sheet = index_1_WB + 2
-            sheet[f"A{index_sheet}"] = item_1_WB
-            sheet[f"B{index_sheet}"] = list_Склад[index_1_WB]
-            sheet[f"C{index_sheet}"] = list_Наименование[index_1_WB]
-            sheet[f"D{index_sheet}"] = list_Текущий_остаток[index_1_WB]
-            sheet[f"E{index_sheet}"] = list_Рассчетные_продажи[index_1_WB]
-            sheet[f"F{index_sheet}"] = list_Количество_в_поставке[index_1_WB]
-            sheet[f"G{index_sheet}"] = list_Период[index_1_WB]
-        book.save(f"Бланк поставки WB на 2 месяца от {corrent_date}.xlsx")
-        book.close()
-        return f"Бланк поставки WB на 2 месяца от {corrent_date}.xlsx"
-    except Exception as ex:
-        if attempt <= 5:
-            time.sleep(30)
-            constat()
-            created_file_WB_4()
 
 if __name__ == '__main__':
     created_file_WB_1()
